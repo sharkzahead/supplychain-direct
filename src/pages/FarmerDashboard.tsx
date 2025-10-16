@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -51,7 +51,7 @@ export default function FarmerDashboard() {
     }
   };
 
-  const updateRequestStatus = async (requestId: string, status: string) => {
+  const updateRequestStatus = async (requestId: string, status: 'pending' | 'accepted' | 'rejected' | 'completed') => {
     try {
       await supabase.from('purchase_requests').update({ status }).eq('id', requestId);
       fetchData();

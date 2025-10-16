@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,7 +37,7 @@ export default function AddCropDialog({ open, onOpenChange, onSuccess }: AddCrop
         harvest_date: formData.get('harvest_date') as string,
         description: formData.get('description') as string,
         image_url: formData.get('image_url') as string || null,
-      });
+      } as any);
 
       if (error) throw error;
 
