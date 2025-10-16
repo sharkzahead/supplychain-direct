@@ -34,6 +34,18 @@ export default function Marketplace() {
 
   useEffect(() => {
     fetchCrops();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('crops-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'crops' }, () => {
+        fetchCrops();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchCrops = async () => {

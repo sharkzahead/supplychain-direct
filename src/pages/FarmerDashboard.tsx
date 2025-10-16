@@ -23,6 +23,26 @@ export default function FarmerDashboard() {
       return;
     }
     fetchData();
+
+    // Subscribe to real-time changes
+    const cropsChannel = supabase
+      .channel('farmer-crops-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'crops' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    const requestsChannel = supabase
+      .channel('farmer-requests-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'purchase_requests' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(cropsChannel);
+      supabase.removeChannel(requestsChannel);
+    };
   }, [user, navigate]);
 
   const fetchData = async () => {

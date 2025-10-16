@@ -30,6 +30,34 @@ export default function FactoryDashboard() {
       return;
     }
     fetchData();
+
+    // Subscribe to real-time changes
+    const cropsChannel = supabase
+      .channel('factory-crops-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'crops' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    const requirementsChannel = supabase
+      .channel('factory-requirements-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'requirements' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    const requestsChannel = supabase
+      .channel('factory-requests-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'purchase_requests' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(cropsChannel);
+      supabase.removeChannel(requirementsChannel);
+      supabase.removeChannel(requestsChannel);
+    };
   }, [user, navigate]);
 
   const fetchData = async () => {
