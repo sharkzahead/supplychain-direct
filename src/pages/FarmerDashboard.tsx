@@ -73,7 +73,24 @@ export default function FarmerDashboard() {
 
   const updateRequestStatus = async (requestId: string, status: 'pending' | 'accepted' | 'rejected' | 'completed') => {
     try {
+      // Get the request to find the crop_id
+      const { data: request } = await supabase
+        .from('purchase_requests')
+        .select('crop_id')
+        .eq('id', requestId)
+        .single();
+
+      // Update the request status
       await supabase.from('purchase_requests').update({ status }).eq('id', requestId);
+
+      // If accepted, mark the crop as unavailable
+      if (status === 'accepted' && request?.crop_id) {
+        await supabase
+          .from('crops')
+          .update({ available: false })
+          .eq('id', request.crop_id);
+      }
+
       fetchData();
     } catch (error) {
       console.error('Error updating request:', error);
