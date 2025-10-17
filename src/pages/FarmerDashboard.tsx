@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, TrendingUp, Package, MessageSquare, LogOut } from 'lucide-react';
+import { Loader2, Plus, TrendingUp, Package, MessageSquare, LogOut, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AddCropDialog from '@/components/AddCropDialog';
 
@@ -97,6 +97,15 @@ export default function FarmerDashboard() {
     }
   };
 
+  const deleteCrop = async (cropId: string) => {
+    try {
+      await supabase.from('crops').delete().eq('id', cropId);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting crop:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -183,6 +192,15 @@ export default function FarmerDashboard() {
                       <p className="font-semibold text-primary">₹{crop.price_per_unit}/{crop.unit}</p>
                       <p className="text-muted-foreground">Harvest: {new Date(crop.harvest_date).toLocaleDateString()}</p>
                     </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full mt-4"
+                      onClick={() => deleteCrop(crop.id)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove Crop
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
