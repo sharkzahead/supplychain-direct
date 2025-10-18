@@ -128,6 +128,71 @@ export type Database = {
           },
         ]
       }
+      iot_devices: {
+        Row: {
+          active: boolean
+          created_at: string
+          device_name: string
+          device_type: string
+          farmer_id: string
+          id: string
+          location: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          device_name: string
+          device_type: string
+          farmer_id: string
+          id?: string
+          location: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          device_name?: string
+          device_type?: string
+          farmer_id?: string
+          id?: string
+          location?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      moisture_readings: {
+        Row: {
+          device_id: string
+          id: string
+          moisture_level: number
+          recorded_at: string
+          temperature: number | null
+        }
+        Insert: {
+          device_id: string
+          id?: string
+          moisture_level: number
+          recorded_at?: string
+          temperature?: number | null
+        }
+        Update: {
+          device_id?: string
+          id?: string
+          moisture_level?: number
+          recorded_at?: string
+          temperature?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moisture_readings_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "iot_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -157,6 +222,41 @@ export type Database = {
           user_type?: Database["public"]["Enums"]["user_type"]
         }
         Relationships: []
+      }
+      pump_actions: {
+        Row: {
+          action: string
+          created_at: string
+          device_id: string
+          duration_seconds: number | null
+          id: string
+          triggered_by: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          device_id: string
+          duration_seconds?: number | null
+          id?: string
+          triggered_by: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          device_id?: string
+          duration_seconds?: number | null
+          id?: string
+          triggered_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pump_actions_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "iot_devices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       purchase_requests: {
         Row: {

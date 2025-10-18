@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, TrendingUp, Package, MessageSquare, LogOut, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AddCropDialog from '@/components/AddCropDialog';
+import IoTMonitor from '@/components/IoTMonitor';
 
 export default function FarmerDashboard() {
   const { user, signOut } = useAuth();
@@ -163,6 +164,7 @@ export default function FarmerDashboard() {
           <TabsList>
             <TabsTrigger value="crops">My Crops</TabsTrigger>
             <TabsTrigger value="requests">Purchase Requests</TabsTrigger>
+            <TabsTrigger value="iot">IoT Monitoring</TabsTrigger>
           </TabsList>
 
           <TabsContent value="crops" className="space-y-4">
@@ -292,6 +294,11 @@ export default function FarmerDashboard() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="iot" className="space-y-4">
+            <h2 className="text-2xl font-semibold">IoT Monitoring & Control</h2>
+            <IoTMonitor />
           </TabsContent>
         </Tabs>
       </div>
