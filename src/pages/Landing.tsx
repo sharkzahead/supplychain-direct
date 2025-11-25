@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sprout, Factory, TrendingUp, Users, Shield, Zap } from 'lucide-react';
+import { Sprout, Factory, TrendingUp, Users, Shield, Zap, FileText } from 'lucide-react';
 
 export default function Landing() {
   return (
@@ -31,6 +31,12 @@ export default function Landing() {
               <Link to="/marketplace">
                 <Button size="lg" variant="outline" className="text-lg px-8">
                   Browse Marketplace
+                </Button>
+              </Link>
+              <Link to="/documentation">
+                <Button size="lg" variant="secondary" className="text-lg px-8">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Documentation
                 </Button>
               </Link>
             </div>

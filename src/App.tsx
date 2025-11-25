@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Marketplace from "./pages/Marketplace";
 import FarmerDashboard from "./pages/FarmerDashboard";
 import FactoryDashboard from "./pages/FactoryDashboard";
+import Documentation from "./pages/Documentation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/farmer" element={<FarmerDashboard />} />
             <Route path="/factory" element={<FactoryDashboard />} />
+            <Route path="/documentation" element={<Documentation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
