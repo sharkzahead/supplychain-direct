@@ -51,6 +51,9 @@ export default function Documentation() {
               <li className="font-medium">Project Overview</li>
               <li className="font-medium">Technology Stack</li>
               <li className="font-medium">System Architecture</li>
+              <li className="font-medium">Use Case Diagram</li>
+              <li className="font-medium">Sequence Diagram</li>
+              <li className="font-medium">Dataflow Diagram</li>
               <li className="font-medium">Database Schema</li>
               <li className="font-medium">Key Features</li>
               <li className="font-medium">User Flows</li>
@@ -182,9 +185,252 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 4. Database Schema */}
+        {/* 4. Use Case Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">4. Database Schema</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">4. Use Case Diagram</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`@startuml
+left to right direction
+skinparam actorStyle awesome
+
+actor Farmer
+actor Factory
+actor System
+
+rectangle "Farm2Factory Platform" {
+  usecase "Sign Up / Login" as UC1
+  usecase "Create Profile" as UC2
+  usecase "List Crops for Sale" as UC3
+  usecase "View Marketplace" as UC4
+  usecase "Post Requirements" as UC5
+  usecase "Send Purchase Request" as UC6
+  usecase "View Purchase Requests" as UC7
+  usecase "Accept/Reject Request" as UC8
+  usecase "Manage IoT Devices" as UC9
+  usecase "Monitor Sensors" as UC10
+  usecase "Control Irrigation" as UC11
+}
+
+' Farmer Use Cases
+Farmer --> UC1
+Farmer --> UC2
+Farmer --> UC3
+Farmer --> UC4
+Farmer --> UC7
+Farmer --> UC8
+Farmer --> UC9
+Farmer --> UC10
+Farmer --> UC11
+
+' Factory Use Cases
+Factory --> UC1
+Factory --> UC2
+Factory --> UC4
+Factory --> UC5
+Factory --> UC6
+
+' System Relationships
+UC1 ..> UC2 : <<include>>
+UC3 ..> UC4 : <<extend>>
+UC5 ..> UC4 : <<extend>>
+UC6 ..> UC7 : triggers
+UC9 ..> UC10 : enables
+UC10 ..> UC11 : triggers
+
+System --> UC10 : "Automated Alerts"
+System --> UC11 : "Automatic Irrigation"
+
+note right of UC9
+  IoT Feature (Planned)
+  - Soil Moisture Sensors
+  - Temperature Monitoring
+  - Pump Control
+end note
+
+@enduml`}
+              </pre>
+            </div>
+          </div>
+          <div className="space-y-4 text-sm">
+            <h3 className="font-semibold mb-2">Actor Descriptions:</h3>
+            <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+              <li><strong>Farmer:</strong> Agricultural producer who lists crops and manages IoT devices</li>
+              <li><strong>Factory:</strong> Industrial buyer who posts requirements and sends purchase requests</li>
+              <li><strong>System:</strong> Automated platform features (alerts, irrigation control)</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* 5. Sequence Diagram */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">5. Sequence Diagram - Purchase Request Flow</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`sequenceDiagram
+    participant F as Factory User
+    participant UI as React Frontend
+    participant Auth as Auth Context
+    participant DB as Database
+    participant RT as Realtime Service
+    participant FR as Farmer User
+
+    Note over F,FR: Purchase Request Workflow
+
+    F->>UI: Browse Marketplace
+    UI->>DB: Query available crops
+    DB-->>UI: Return crops list
+    UI-->>F: Display crops
+
+    F->>UI: Select crop & send request
+    UI->>Auth: Verify factory auth
+    Auth-->>UI: Token valid
+    
+    UI->>DB: INSERT purchase_request
+    Note over DB: RLS Policy Check:<br/>Factory owns request
+    DB-->>UI: Request created
+    
+    DB->>RT: Notify new request
+    RT->>FR: Push notification
+    
+    UI-->>F: Show success message
+    
+    Note over FR: Farmer receives notification
+    FR->>UI: View requests
+    UI->>DB: Query farmer's requests
+    DB-->>UI: Return requests
+    UI-->>FR: Display requests
+
+    FR->>UI: Accept/Reject request
+    UI->>Auth: Verify farmer auth
+    Auth-->>UI: Token valid
+    
+    UI->>DB: UPDATE purchase_request status
+    Note over DB: RLS Policy Check:<br/>Farmer owns crop
+    DB-->>UI: Status updated
+    
+    alt Request Accepted
+        DB->>DB: UPDATE crop.available = false
+        DB->>RT: Notify status change
+        RT->>F: Push notification (Accepted)
+        UI-->>FR: Show success
+    else Request Rejected
+        DB->>RT: Notify status change
+        RT->>F: Push notification (Rejected)
+        UI-->>FR: Show confirmation
+    end`}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. Dataflow Diagram */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">6. Dataflow Diagram</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`flowchart TB
+    subgraph External["External Entities"]
+        A1[Farmer User]
+        A2[Factory User]
+        A3[IoT Devices ESP32/ESP8266]
+    end
+
+    subgraph Frontend["Frontend Layer - React App"]
+        B1[Authentication]
+        B2[Farmer Dashboard]
+        B3[Factory Dashboard]
+        B4[Marketplace]
+    end
+
+    subgraph Backend["Backend Layer - Lovable Cloud"]
+        C1[Auth Service]
+        C2[Database PostgreSQL]
+        C3[Edge Functions]
+        C4[Realtime Service]
+    end
+
+    subgraph Data["Data Stores"]
+        D1[(profiles)]
+        D2[(crops)]
+        D3[(requirements)]
+        D4[(purchase_requests)]
+        D5[(iot_devices)]
+        D6[(moisture_readings)]
+    end
+
+    %% Authentication Flow
+    A1 & A2 -->|Login/Signup| B1
+    B1 -->|Auth Request| C1
+    C1 -->|JWT Token| B1
+    C1 <-->|User Data| D1
+
+    %% Farmer Operations
+    A1 -->|List Crops| B2
+    B2 -->|Create/Update| C2
+    C2 -->|Store| D2
+    B2 -->|View Requests| C2
+    C2 -->|Fetch| D4
+    
+    %% Factory Operations
+    A2 -->|Post Requirements| B3
+    B3 -->|Create| C2
+    C2 -->|Store| D3
+    A2 -->|Send Purchase Request| B3
+    B3 -->|Create Request| C2
+    C2 -->|Store| D4
+
+    %% Marketplace
+    A1 & A2 -->|Browse| B4
+    B4 -->|Query| C2
+    C2 -->|Fetch| D2 & D3
+    C2 -->|Results| B4
+
+    %% Real-time Updates
+    C2 -->|Change Notifications| C4
+    C4 -->|Push Updates| B2 & B3 & B4
+
+    %% IoT Data Flow
+    A3 -->|Sensor Data HTTP POST| C3
+    C3 -->|Store Readings| C2
+    C2 -->|Insert| D6
+    C2 -->|Link to| D5
+    B2 -->|View Sensor Data| C2
+    C2 -->|Fetch| D6
+    B2 -->|Control Pump| C3
+    C3 -->|Pump Command HTTP| A3
+
+    %% Styling
+    classDef external fill:#e1f5ff,stroke:#333,stroke-width:2px
+    classDef frontend fill:#fff4e6,stroke:#333,stroke-width:2px
+    classDef backend fill:#e8f5e9,stroke:#333,stroke-width:2px
+    classDef datastore fill:#f3e5f5,stroke:#333,stroke-width:2px
+    
+    class A1,A2,A3 external
+    class B1,B2,B3,B4 frontend
+    class C1,C2,C3,C4 backend
+    class D1,D2,D3,D4,D5,D6 datastore`}
+              </pre>
+            </div>
+          </div>
+          <div className="space-y-4 text-sm">
+            <h3 className="font-semibold mb-2">Data Flow Descriptions:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+              <li><strong>Authentication Flow:</strong> Users authenticate through Auth Service, receive JWT tokens for secure API access</li>
+              <li><strong>Marketplace Flow:</strong> Both user types can browse marketplace; data fetched from crops and requirements tables</li>
+              <li><strong>Transaction Flow:</strong> Factory sends purchase request → stored in database → farmer notified → farmer responds → crop availability updated</li>
+              <li><strong>Real-time Flow:</strong> Database changes trigger Realtime Service → pushes updates to connected clients</li>
+              <li><strong>IoT Flow:</strong> ESP32 sensors POST data to Edge Functions → stored in database → displayed on farmer dashboard → farmer can send pump control commands back to devices</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* 7. Database Schema */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. Database Schema</h2>
           
           <div className="space-y-6">
             {/* Core Tables */}
@@ -360,9 +606,9 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 5. Key Features */}
+        {/* 8. Key Features */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">5. Key Features</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. Key Features</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -401,9 +647,9 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 6. User Flows */}
+        {/* 9. User Flows */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">6. User Flows</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">9. User Flows</h2>
           
           <div className="space-y-6">
             <Card className="print:break-inside-avoid">
@@ -463,9 +709,9 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 7. Security & RLS */}
+        {/* 10. Security & RLS */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. Security & RLS Policies</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">10. Security & RLS Policies</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               Row-Level Security (RLS) policies ensure that users can only access data they're authorized to view or modify.
@@ -510,9 +756,9 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 8. IoT Integration */}
+        {/* 11. IoT Integration */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. IoT Integration (Planned Feature)</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">11. IoT Integration (Planned Feature)</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               The IoT module will enable smart farming capabilities using ESP32/ESP8266 microcontrollers with sensors and actuators.
