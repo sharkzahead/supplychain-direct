@@ -54,6 +54,9 @@ export default function Documentation() {
               <li className="font-medium">Use Case Diagram</li>
               <li className="font-medium">Sequence Diagram</li>
               <li className="font-medium">Dataflow Diagram</li>
+              <li className="font-medium">ER (Entity Relationship) Diagram</li>
+              <li className="font-medium">Authentication Flow Diagram</li>
+              <li className="font-medium">Component Architecture Diagram</li>
               <li className="font-medium">Database Schema</li>
               <li className="font-medium">Key Features</li>
               <li className="font-medium">User Flows</li>
@@ -428,7 +431,351 @@ end note
           </div>
         </section>
 
-        {/* 7. Database Schema */}
+        {/* 7. ER (Entity Relationship) Diagram */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. ER (Entity Relationship) Diagram</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`erDiagram
+    PROFILES ||--o{ FARMERS : "extends"
+    PROFILES ||--o{ FACTORIES : "extends"
+    FARMERS ||--o{ CROPS : "lists"
+    FACTORIES ||--o{ REQUIREMENTS : "posts"
+    FARMERS ||--o{ IOT_DEVICES : "owns"
+    IOT_DEVICES ||--o{ MOISTURE_READINGS : "generates"
+    IOT_DEVICES ||--o{ PUMP_ACTIONS : "logs"
+    CROPS ||--o{ PURCHASE_REQUESTS : "receives"
+    FACTORIES ||--o{ PURCHASE_REQUESTS : "sends"
+    FARMERS ||--o{ PURCHASE_REQUESTS : "responds_to"
+
+    PROFILES {
+        uuid id PK
+        text user_type "farmer or factory"
+        text full_name
+        text location
+        text phone
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    FARMERS {
+        uuid id PK "FK to profiles.id"
+        text farm_size
+        text[] primary_crops
+        timestamp created_at
+    }
+
+    FACTORIES {
+        uuid id PK "FK to profiles.id"
+        text company_name
+        text[] materials_needed
+        timestamp created_at
+    }
+
+    CROPS {
+        uuid id PK
+        uuid farmer_id FK
+        text crop_name
+        enum category
+        numeric quantity
+        text unit
+        numeric price_per_unit
+        date harvest_date
+        text description
+        text image_url
+        boolean available
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    REQUIREMENTS {
+        uuid id PK
+        uuid factory_id FK
+        text material_name
+        enum category
+        numeric quantity_needed
+        text unit
+        numeric price_willing
+        text description
+        boolean urgent
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PURCHASE_REQUESTS {
+        uuid id PK
+        uuid crop_id FK
+        uuid factory_id FK
+        uuid farmer_id FK
+        numeric quantity
+        numeric offered_price
+        text message
+        enum status "pending, accepted, rejected, completed"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    IOT_DEVICES {
+        uuid id PK
+        uuid farmer_id FK
+        text device_name
+        text device_type
+        text location
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MOISTURE_READINGS {
+        uuid id PK
+        uuid device_id FK
+        numeric moisture_level
+        numeric temperature
+        timestamp recorded_at
+    }
+
+    PUMP_ACTIONS {
+        uuid id PK
+        uuid device_id FK
+        text action "start or stop"
+        text triggered_by "auto or manual"
+        integer duration_seconds
+        timestamp created_at
+    }`}
+              </pre>
+            </div>
+          </div>
+          <div className="space-y-4 text-sm">
+            <h3 className="font-semibold mb-2">Key Relationships:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+              <li><strong>Profile Extension:</strong> Both farmers and factories extend the base profiles table with their specific attributes</li>
+              <li><strong>Marketplace Flow:</strong> Farmers list crops, factories post requirements, and purchase_requests bridge the two</li>
+              <li><strong>Many-to-One:</strong> Multiple crops belong to one farmer; multiple requirements belong to one factory</li>
+              <li><strong>Transaction Triangle:</strong> Purchase requests link crop, factory, and farmer for complete transaction tracking</li>
+              <li><strong>IoT Hierarchy:</strong> Farmers own devices → devices generate readings → devices log pump actions</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* 8. Authentication Flow Diagram */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. Authentication Flow Diagram</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`flowchart TD
+    Start([User Visits Platform]) --> Landing[Landing Page]
+    Landing --> Choice{Existing User?}
+    
+    Choice -->|No| Signup[Sign Up Form]
+    Choice -->|Yes| Login[Login Form]
+    
+    Signup --> InputSignup[Enter Email & Password]
+    InputSignup --> SubmitSignup[Submit Registration]
+    SubmitSignup --> AuthService1[Supabase Auth Service]
+    AuthService1 --> CreateUser[Create User in auth.users]
+    CreateUser --> AutoConfirm{Auto-confirm enabled?}
+    AutoConfirm -->|Yes| Confirmed[User Confirmed]
+    AutoConfirm -->|No| EmailVerif[Email Verification Required]
+    EmailVerif --> Confirmed
+    
+    Login --> InputLogin[Enter Email & Password]
+    InputLogin --> SubmitLogin[Submit Credentials]
+    SubmitLogin --> AuthService2[Supabase Auth Service]
+    AuthService2 --> ValidateCreds{Valid Credentials?}
+    ValidateCreds -->|No| LoginError[Show Error Message]
+    LoginError --> Login
+    ValidateCreds -->|Yes| Confirmed
+    
+    Confirmed --> GenerateJWT[Generate JWT Token]
+    GenerateJWT --> StoreSession[Store Session in Browser]
+    StoreSession --> CheckProfile{Profile Exists?}
+    
+    CheckProfile -->|No| ProfileForm[Show Profile Creation Form]
+    ProfileForm --> SelectUserType[Select: Farmer or Factory]
+    SelectUserType --> EnterDetails[Enter Full Name, Location, etc.]
+    EnterDetails --> CreateProfile[Create Profile Record]
+    CreateProfile --> CreateExtended{User Type?}
+    CreateExtended -->|Farmer| CreateFarmer[Create Farmers Record]
+    CreateExtended -->|Factory| CreateFactory[Create Factories Record]
+    
+    CheckProfile -->|Yes| LoadProfile[Load Profile Data]
+    CreateFarmer --> LoadProfile
+    CreateFactory --> LoadProfile
+    
+    LoadProfile --> SetContext[Update Auth Context]
+    SetContext --> Route{User Type?}
+    Route -->|Farmer| FarmerDash[Redirect to Farmer Dashboard]
+    Route -->|Factory| FactoryDash[Redirect to Factory Dashboard]
+    
+    FarmerDash --> Authenticated[Authenticated Session]
+    FactoryDash --> Authenticated
+    
+    Authenticated --> Protected[Access Protected Routes]
+    Protected --> APICall[API Calls Include JWT]
+    APICall --> RLSCheck[Database RLS Policy Check]
+    RLSCheck --> AuthorizedData[Return Authorized Data Only]
+    
+    Authenticated --> Logout{User Logs Out?}
+    Logout -->|Yes| ClearSession[Clear Session & Token]
+    ClearSession --> Landing
+    Logout -->|No| Protected
+    
+    style Start fill:#e1f5ff
+    style Authenticated fill:#c8e6c9
+    style LoginError fill:#ffcdd2
+    style AuthorizedData fill:#fff9c4`}
+              </pre>
+            </div>
+          </div>
+          <div className="space-y-4 text-sm">
+            <h3 className="font-semibold mb-2">Authentication Flow Steps:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+              <li><strong>Registration:</strong> New users sign up → Supabase creates auth.users record → JWT token generated</li>
+              <li><strong>Profile Creation:</strong> After first login, users create profile with user type (farmer/factory) → extended record created</li>
+              <li><strong>Login:</strong> Existing users authenticate → session stored in browser → redirected based on user type</li>
+              <li><strong>Session Management:</strong> JWT token included in all API requests → RLS policies verify user identity</li>
+              <li><strong>Authorization:</strong> Database RLS policies ensure users only access their own data or public data</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* 9. Component Architecture Diagram */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">9. Component Architecture Diagram</h2>
+          <div className="bg-muted/30 p-6 rounded-lg mb-4">
+            <div className="mermaid-container">
+              <pre className="text-xs overflow-x-auto whitespace-pre">
+{`graph TB
+    subgraph App["App.tsx - Root Component"]
+        Router[React Router]
+    end
+
+    subgraph Context["Context Providers"]
+        AuthCtx[AuthContext<br/>- user<br/>- userType<br/>- profile]
+    end
+
+    subgraph Pages["Page Components"]
+        Landing[Landing.tsx<br/>Hero, Features, CTA]
+        Auth[Auth.tsx<br/>Login/Signup Forms]
+        FarmerDash[FarmerDashboard.tsx<br/>Crops, Requests, Stats]
+        FactoryDash[FactoryDashboard.tsx<br/>Browse, Requirements]
+        Market[Marketplace.tsx<br/>Browse All Crops]
+        Docs[Documentation.tsx<br/>System Docs]
+        NotFound[NotFound.tsx<br/>404 Page]
+    end
+
+    subgraph FarmerComponents["Farmer Components"]
+        CropsList[My Crops List<br/>Display Crops Table]
+        AddCrop[AddCropDialog<br/>Form to Add Crop]
+        Requests[Purchase Requests<br/>Accept/Reject UI]
+        IoTMonitor[IoTMonitor<br/>Sensor Dashboard]
+    end
+
+    subgraph FactoryComponents["Factory Components"]
+        BrowseCrops[Browse Crops<br/>Search & Filter]
+        ReqList[Requirements List<br/>My Requirements]
+        AddReq[AddRequirementDialog<br/>Post New Requirement]
+        PurchaseReq[PurchaseRequestDialog<br/>Send Request Form]
+    end
+
+    subgraph UIComponents["UI Components (shadcn)"]
+        Button[Button]
+        Card[Card]
+        Dialog[Dialog]
+        Input[Input]
+        Select[Select]
+        Table[Table]
+        Toast[Toast]
+    end
+
+    subgraph Hooks["Custom Hooks"]
+        UseMobile[useMobile]
+        UseToast[useToast]
+    end
+
+    subgraph Services["Services & APIs"]
+        Supabase[Supabase Client<br/>Database Queries]
+        TanStack[TanStack Query<br/>Data Fetching & Cache]
+    end
+
+    App --> Router
+    Router --> Context
+    Context --> AuthCtx
+    
+    Router --> Pages
+    Pages --> Landing
+    Pages --> Auth
+    Pages --> FarmerDash
+    Pages --> FactoryDash
+    Pages --> Market
+    Pages --> Docs
+    Pages --> NotFound
+
+    FarmerDash --> FarmerComponents
+    FarmerComponents --> CropsList
+    FarmerComponents --> AddCrop
+    FarmerComponents --> Requests
+    FarmerComponents --> IoTMonitor
+
+    FactoryDash --> FactoryComponents
+    FactoryComponents --> BrowseCrops
+    FactoryComponents --> ReqList
+    FactoryComponents --> AddReq
+    FactoryComponents --> PurchaseReq
+
+    FarmerComponents --> UIComponents
+    FactoryComponents --> UIComponents
+    Pages --> UIComponents
+    
+    UIComponents --> Button
+    UIComponents --> Card
+    UIComponents --> Dialog
+    UIComponents --> Input
+    UIComponents --> Select
+    UIComponents --> Table
+    UIComponents --> Toast
+
+    Pages --> Hooks
+    FarmerComponents --> Hooks
+    FactoryComponents --> Hooks
+
+    Pages --> Services
+    FarmerComponents --> Services
+    FactoryComponents --> Services
+    Services --> Supabase
+    Services --> TanStack
+
+    AuthCtx -.->|provides user state| Pages
+    AuthCtx -.->|provides user state| FarmerComponents
+    AuthCtx -.->|provides user state| FactoryComponents
+
+    style App fill:#e3f2fd
+    style Context fill:#f3e5f5
+    style Pages fill:#fff9c4
+    style FarmerComponents fill:#c8e6c9
+    style FactoryComponents fill:#ffecb3
+    style UIComponents fill:#e1f5fe
+    style Services fill:#fce4ec`}
+              </pre>
+            </div>
+          </div>
+          <div className="space-y-4 text-sm">
+            <h3 className="font-semibold mb-2">Component Hierarchy:</h3>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+              <li><strong>App Root:</strong> Main router and context providers wrap the entire application</li>
+              <li><strong>Page Level:</strong> Route-based page components for different user journeys</li>
+              <li><strong>Feature Components:</strong> Role-specific components for farmers (crop management) and factories (purchasing)</li>
+              <li><strong>Shared UI:</strong> Reusable shadcn/ui components used across all features</li>
+              <li><strong>State Management:</strong> AuthContext provides user state globally; TanStack Query manages server state</li>
+              <li><strong>Data Layer:</strong> Supabase client handles all backend communication with RLS security</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* 10. Database Schema */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. Database Schema</h2>
           
@@ -606,9 +953,9 @@ end note
           </div>
         </section>
 
-        {/* 8. Key Features */}
+        {/* 11. Key Features */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. Key Features</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">11. Key Features</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -647,9 +994,9 @@ end note
           </div>
         </section>
 
-        {/* 9. User Flows */}
+        {/* 12. User Flows */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">9. User Flows</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">12. User Flows</h2>
           
           <div className="space-y-6">
             <Card className="print:break-inside-avoid">
@@ -709,9 +1056,9 @@ end note
           </div>
         </section>
 
-        {/* 10. Security & RLS */}
+        {/* 13. Security & RLS */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">10. Security & RLS Policies</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">13. Security & RLS Policies</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               Row-Level Security (RLS) policies ensure that users can only access data they're authorized to view or modify.
@@ -756,9 +1103,9 @@ end note
           </div>
         </section>
 
-        {/* 11. IoT Integration */}
+        {/* 14. IoT Integration */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">11. IoT Integration (Planned Feature)</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">14. IoT Integration (Planned Feature)</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               The IoT module will enable smart farming capabilities using ESP32/ESP8266 microcontrollers with sensors and actuators.
