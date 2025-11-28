@@ -50,6 +50,7 @@ export default function Documentation() {
             <ol className="space-y-2 list-decimal list-inside">
               <li className="font-medium">Project Overview</li>
               <li className="font-medium">Technology Stack</li>
+              <li className="font-medium text-primary">Complete System Summary Diagram</li>
               <li className="font-medium">System Architecture</li>
               <li className="font-medium">Use Case Diagram</li>
               <li className="font-medium">Sequence Diagram</li>
@@ -135,9 +136,181 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 3. System Architecture */}
+        {/* 3. Complete System Summary Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">3. System Architecture</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">3. Complete System Summary Diagram</h2>
+          <p className="text-muted-foreground mb-6">
+            This comprehensive diagram combines the System Overview, Feature Summary, and Data Flow into one unified visual representation of the entire Farm2Factory platform.
+          </p>
+          <div className="bg-muted/30 p-6 rounded-lg mb-6">
+            <pre className="text-xs overflow-x-auto whitespace-pre">
+{`╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    FARM2FACTORY - COMPLETE SYSTEM SUMMARY                                         ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                                    ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    ║
+║   │                                         USERS / ACTORS                                                   │    ║
+║   │                                                                                                          │    ║
+║   │      👨‍🌾 FARMER                                                           🏭 FACTORY                       │    ║
+║   │   ┌─────────────────┐                                                 ┌─────────────────┐               │    ║
+║   │   │  • List Crops   │                                                 │ • Post Needs    │               │    ║
+║   │   │  • View Requests│                                                 │ • Browse Crops  │               │    ║
+║   │   │  • Accept/Reject│                                                 │ • Send Requests │               │    ║
+║   │   │  • IoT Monitor  │                                                 │ • Track Orders  │               │    ║
+║   │   └────────┬────────┘                                                 └────────┬────────┘               │    ║
+║   └────────────┼────────────────────────────────────────────────────────────────────┼────────────────────────┘    ║
+║                │                                                                    │                             ║
+║                └──────────────────────────┬─────────────────────────────────────────┘                             ║
+║                                           ▼                                                                       ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    ║
+║   │                                      FRONTEND (React + TypeScript)                                       │    ║
+║   │  ┌───────────┐  ┌───────────────┐  ┌────────────────┐  ┌─────────────┐  ┌──────────────┐               │    ║
+║   │  │  Landing  │  │   Auth Page   │  │  Marketplace   │  │   Farmer    │  │   Factory    │               │    ║
+║   │  │   Page    │  │ Login/Signup  │  │   (Browse)     │  │  Dashboard  │  │  Dashboard   │               │    ║
+║   │  └─────┬─────┘  └───────┬───────┘  └───────┬────────┘  └──────┬──────┘  └──────┬───────┘               │    ║
+║   │        │                │                  │                  │                 │                       │    ║
+║   │        └────────────────┴──────────────────┴──────────────────┴─────────────────┘                       │    ║
+║   │                                            │                                                             │    ║
+║   │                              ┌─────────────┴─────────────┐                                               │    ║
+║   │                              │     AuthContext           │                                               │    ║
+║   │                              │  (Session Management)     │                                               │    ║
+║   │                              └─────────────┬─────────────┘                                               │    ║
+║   │                                            │                                                             │    ║
+║   │                              ┌─────────────┴─────────────┐                                               │    ║
+║   │                              │   Supabase Client         │                                               │    ║
+║   │                              │  + TanStack React Query   │                                               │    ║
+║   │                              └─────────────┬─────────────┘                                               │    ║
+║   └────────────────────────────────────────────┼─────────────────────────────────────────────────────────────┘    ║
+║                                                │                                                                  ║
+║                          ┌─────────────────────┼─────────────────────┐                                           ║
+║                          │ HTTPS/WSS          │                      │                                           ║
+║                          ▼                    ▼                      ▼                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    ║
+║   │                                    LOVABLE CLOUD (Backend)                                               │    ║
+║   │                                                                                                          │    ║
+║   │   ┌───────────────┐    ┌─────────────────────┐    ┌──────────────────┐    ┌──────────────────────┐     │    ║
+║   │   │  Auth Service │    │  Realtime Service   │    │  Edge Functions  │    │   Storage Service    │     │    ║
+║   │   │               │    │                     │    │                  │    │                      │     │    ║
+║   │   │ • JWT Tokens  │    │ • Live Updates      │    │ • receive-sensor │    │ • Crop Images        │     │    ║
+║   │   │ • Session Mgmt│    │ • Subscriptions     │    │ • control-pump   │    │ • Profile Avatars    │     │    ║
+║   │   │ • RLS Enforce │    │ • Broadcast         │    │ • Custom Logic   │    │ • Documents          │     │    ║
+║   │   └───────┬───────┘    └──────────┬──────────┘    └────────┬─────────┘    └──────────┬───────────┘     │    ║
+║   │           │                       │                        │                         │                  │    ║
+║   │           └───────────────────────┴────────────────────────┴─────────────────────────┘                  │    ║
+║   │                                                │                                                         │    ║
+║   └────────────────────────────────────────────────┼─────────────────────────────────────────────────────────┘    ║
+║                                                    ▼                                                              ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    ║
+║   │                                   PostgreSQL DATABASE                                                    │    ║
+║   │                                                                                                          │    ║
+║   │   ┌─────────────────────────────────────┐    ┌─────────────────────────────────────┐                    │    ║
+║   │   │         USER MANAGEMENT             │    │           MARKETPLACE               │                    │    ║
+║   │   │  ┌──────────┐  ┌──────────────┐    │    │  ┌──────────┐  ┌──────────────┐    │                    │    ║
+║   │   │  │ profiles │──│   farmers    │    │    │  │  crops   │  │ requirements │    │                    │    ║
+║   │   │  │          │──│   factories  │    │    │  │          │  │              │    │                    │    ║
+║   │   │  └──────────┘  └──────────────┘    │    │  └────┬─────┘  └──────┬───────┘    │                    │    ║
+║   │   └─────────────────────────────────────┘    │       │              │            │                    │    ║
+║   │                                              │       └──────┬───────┘            │                    │    ║
+║   │   ┌─────────────────────────────────────┐   │              ▼                     │                    │    ║
+║   │   │           IoT DATA                  │   │    ┌──────────────────┐            │                    │    ║
+║   │   │  ┌─────────────┐ ┌───────────────┐  │   │    │purchase_requests │            │                    │    ║
+║   │   │  │ iot_devices │ │moisture_readings│ │   │    └──────────────────┘            │                    │    ║
+║   │   │  │             │ │               │  │   └─────────────────────────────────────┘                    │    ║
+║   │   │  └──────┬──────┘ └───────────────┘  │                                                              │    ║
+║   │   │         │        ┌───────────────┐  │                                                              │    ║
+║   │   │         └────────│  pump_actions │  │                                                              │    ║
+║   │   │                  └───────────────┘  │                                                              │    ║
+║   │   └─────────────────────────────────────┘                                                              │    ║
+║   │                                                                                                         │    ║
+║   │   ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐  │    ║
+║   │   │                              ROW LEVEL SECURITY (RLS)                                            │  │    ║
+║   │   │  • Farmers: CRUD own crops, view received requests, manage IoT devices                          │  │    ║
+║   │   │  • Factories: CRUD own requirements, view sent requests, browse marketplace                     │  │    ║
+║   │   │  • Public: View available crops & active requirements                                            │  │    ║
+║   │   └─────────────────────────────────────────────────────────────────────────────────────────────────┘  │    ║
+║   └─────────────────────────────────────────────────────────────────────────────────────────────────────────┘    ║
+║                                                    ▲                                                              ║
+║                                                    │                                                              ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    ║
+║   │                                      IoT DEVICES (Future)                                                │    ║
+║   │                                                                                                          │    ║
+║   │      ┌─────────────┐         ┌─────────────┐         ┌─────────────┐         ┌─────────────┐            │    ║
+║   │      │   ESP32 /   │         │    Soil     │  Data   │  Temperature│         │   Water     │            │    ║
+║   │      │   ESP8266   │◄────────│  Moisture   │◄────────│   Sensor    │         │    Pump     │            │    ║
+║   │      │Microcontroller│        │   Sensor    │         │             │         │  (12V DC)   │            │    ║
+║   │      └──────┬──────┘         └─────────────┘         └─────────────┘         └──────┬──────┘            │    ║
+║   │             │                                                                        │                   │    ║
+║   │             │  HTTP POST to Edge Function                    Control Signal          │                   │    ║
+║   │             │  (moisture < 30% → auto-trigger)  ─────────────────────────────────────┘                   │    ║
+║   │             │                                                                                            │    ║
+║   └─────────────┼────────────────────────────────────────────────────────────────────────────────────────────┘    ║
+║                 │                                                                                                 ║
+╠═════════════════╧═════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                              DATA FLOW SUMMARY                                                    ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                                   ║
+║   [FARMER]                                    [FACTORY]                           [IoT DEVICES]                  ║
+║      │                                            │                                     │                        ║
+║      │ 1. Register/Login                          │ 1. Register/Login                   │                        ║
+║      ▼                                            ▼                                     │                        ║
+║   [AuthContext] ──────────────────────────► [AuthContext]                               │                        ║
+║      │                                            │                                     │                        ║
+║      │ 2. Add Crops                               │ 2. Post Requirements                │ Sensor Data            ║
+║      ▼                                            ▼                                     ▼                        ║
+║   [crops table] ◄─────── View ─────────────► [requirements] ◄──────────── [receive-sensor-data]                 ║
+║      │                                            │                                     │                        ║
+║      │ 3. Factory sends request                   │                                     │                        ║
+║      ▼                                            │                                     │                        ║
+║   [purchase_requests] ◄───────────────────────────┘                                     │                        ║
+║      │                                                                                  │                        ║
+║      │ 4. Real-time notification                                                        │                        ║
+║      ▼                                                                                  │                        ║
+║   [Farmer Dashboard] ◄──── Realtime Subscribe ───────────────────────────────────────────                        ║
+║      │                                                                                  │                        ║
+║      │ 5. Accept/Reject                                                                 │                        ║
+║      ▼                                                                                  │                        ║
+║   [Status Update] ────► Real-time to Factory ────► [Factory Dashboard]                  │                        ║
+║                                                                                         │                        ║
+║   [IoT Monitor] ◄───── moisture_readings ◄──────────────────────────────────────────────┘                        ║
+║      │                                                                                                           ║
+║      │ Auto/Manual Pump Control                                                                                  ║
+║      ▼                                                                                                           ║
+║   [control-pump] ────► [pump_actions] ────► [Physical Pump]                                                      ║
+║                                                                                                                   ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝`}
+            </pre>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4 text-sm">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">System Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="text-muted-foreground text-xs">
+                Shows all major components: Users, Frontend pages, Backend services, Database tables, and IoT devices in a layered architecture.
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Feature Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="text-muted-foreground text-xs">
+                Displays all features per user type - Farmers can list crops, manage IoT, handle requests. Factories can post needs and browse marketplace.
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Data Flow</CardTitle>
+              </CardHeader>
+              <CardContent className="text-muted-foreground text-xs">
+                Illustrates complete data journey from user actions through frontend, backend services, database tables, and IoT device communication.
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* 4. System Architecture */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">4. System Architecture</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-6">
             <pre className="text-xs overflow-x-auto whitespace-pre">
 {`┌─────────────────────────────────────────────────────────────────────────┐
@@ -188,9 +361,9 @@ export default function Documentation() {
           </div>
         </section>
 
-        {/* 4. Use Case Diagram */}
+        {/* 5. Use Case Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">4. Use Case Diagram</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">5. Use Case Diagram</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -266,9 +439,9 @@ end note
           </div>
         </section>
 
-        {/* 5. Sequence Diagram */}
+        {/* 6. Sequence Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">5. Sequence Diagram - Purchase Request Flow</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">6. Sequence Diagram - Purchase Request Flow</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -329,9 +502,9 @@ end note
           </div>
         </section>
 
-        {/* 6. Dataflow Diagram */}
+        {/* 7. Dataflow Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">6. Dataflow Diagram</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. Dataflow Diagram</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -431,9 +604,9 @@ end note
           </div>
         </section>
 
-        {/* 7. ER (Entity Relationship) Diagram */}
+        {/* 8. ER (Entity Relationship) Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. ER (Entity Relationship) Diagram</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. ER (Entity Relationship) Diagram</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -559,9 +732,9 @@ end note
           </div>
         </section>
 
-        {/* 8. Authentication Flow Diagram */}
+        {/* 9. Authentication Flow Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">8. Authentication Flow Diagram</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">9. Authentication Flow Diagram</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -642,9 +815,9 @@ end note
           </div>
         </section>
 
-        {/* 9. Component Architecture Diagram */}
+        {/* 10. Component Architecture Diagram */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">9. Component Architecture Diagram</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">10. Component Architecture Diagram</h2>
           <div className="bg-muted/30 p-6 rounded-lg mb-4">
             <div className="mermaid-container">
               <pre className="text-xs overflow-x-auto whitespace-pre">
@@ -775,9 +948,9 @@ end note
           </div>
         </section>
 
-        {/* 10. Database Schema */}
+        {/* 11. Database Schema */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">7. Database Schema</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">11. Database Schema</h2>
           
           <div className="space-y-6">
             {/* Core Tables */}
@@ -953,9 +1126,9 @@ end note
           </div>
         </section>
 
-        {/* 11. Key Features */}
+        {/* 12. Key Features */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">11. Key Features</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">12. Key Features</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -994,9 +1167,9 @@ end note
           </div>
         </section>
 
-        {/* 12. User Flows */}
+        {/* 13. User Flows */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">12. User Flows</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">13. User Flows</h2>
           
           <div className="space-y-6">
             <Card className="print:break-inside-avoid">
@@ -1056,9 +1229,9 @@ end note
           </div>
         </section>
 
-        {/* 13. Security & RLS */}
+        {/* 14. Security & RLS */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">13. Security & RLS Policies</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">14. Security & RLS Policies</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               Row-Level Security (RLS) policies ensure that users can only access data they're authorized to view or modify.
@@ -1103,9 +1276,9 @@ end note
           </div>
         </section>
 
-        {/* 14. IoT Integration */}
+        {/* 15. IoT Integration */}
         <section className="mb-12 print:break-inside-avoid">
-          <h2 className="text-3xl font-bold mb-4 border-b pb-2">14. IoT Integration (Planned Feature)</h2>
+          <h2 className="text-3xl font-bold mb-4 border-b pb-2">15. IoT Integration (Planned Feature)</h2>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               The IoT module will enable smart farming capabilities using ESP32/ESP8266 microcontrollers with sensors and actuators.
